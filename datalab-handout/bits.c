@@ -161,8 +161,19 @@ int tmin(void) {
  *   Rating: 1
  */
 int isTmax(int x) {
-  int tMax = 2;
-  return !(tMax ^ x);
+  /*
+  The focus is to check whether there's a carry bit when x + 1. If there's a carry bit, then x + 1 = Tmin.
+  With x | Tmin, we'll get 0xFFFFFFFF.
+  However, we still need to distinguish 0x7FFFFFFF and 0xFFFFFFFF. It's obvisaly that 0x7FFFFFFF + 1, we got
+  0x80000000, there's no information leak since the carry bit can still be store in the 32 bits. However,
+  0xFFFFFFFF + 1, we got 0x00000000.
+   */
+  int temp = x + 1;
+  temp = temp + x;
+  temp = ~temp;
+  temp = temp + !(x+1);// use + operation as logical operation and.
+  return !temp;
+
 }
 /* 
  * allOddBits - return 1 if all odd-numbered bits in word set to 1
