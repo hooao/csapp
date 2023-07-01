@@ -222,7 +222,20 @@ int isAsciiDigit(int x) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return 2;
+  //to solve this problem, let's take a reverse thinking.
+  //We need to return y or z without using more than one return value.
+  //Because we cannot use if statement. So the final retuan value should be a combination of y and z.
+  //We can use x to control the combination.
+  //If x is true, then we return y, otherwise we return z.
+  //The final formula is f(y) + f(z). We can easily deduct that x is zero or not by using !x.
+  // if x is zero, we should control f(y) = 0 and f(z) = z.
+  // if x is not zero, we should control f(y) = y and f(z) = 0.
+  // Then the problem turns to be: f(y) = x operation y, f(z) = !x operation z.
+  // we aim to keep y value and let z to zero after the operation. keep in mind the operations we process y and z should be the same.
+
+  int temp = !x;
+  int temp1 = (z & (~temp + 1)) | (y & (~(!temp) + 1));
+  return temp1;
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
