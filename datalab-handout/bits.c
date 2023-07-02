@@ -245,7 +245,13 @@ int conditional(int x, int y, int z) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  return 2;
+  // to check x == y, use !(x^y)
+  // to check x < y, use x + (~y + 1), with the MSB of the result to be 1.
+    int temp = x + (~y +1);
+    temp = (1<<31) & temp;
+    temp = !temp;
+
+  return !(x^y) | !temp;
 }
 //4
 /* 
