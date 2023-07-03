@@ -263,7 +263,12 @@ int isLessOrEqual(int x, int y) {
  *   Rating: 4 
  */
 int logicalNeg(int x) {
-  return 2;
+  //we need to distinguish 0 and non-zero.
+  //For 0, the result -0 is still zero, there's no sign bit.
+  //So for the other integer, we can get the sign bit using x>>31 or (~x + 1)>>31.
+  int temp = ((x>>31)&1) | ((~x + 1)>>31&1);
+  temp = ~temp+1 + 1;
+  return (temp );
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
