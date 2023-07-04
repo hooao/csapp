@@ -272,18 +272,58 @@ int logicalNeg(int x) {
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
- *  Examples: howManyBits(12) = 5
- *            howManyBits(298) = 10
- *            howManyBits(-5) = 4
- *            howManyBits(0)  = 1
- *            howManyBits(-1) = 1
- *            howManyBits(0x80000000) = 32
+ *  Examples: howManyBits(12) = 5    >1100
+ *            howManyBits(298) = 10  >0001 0010 1010
+ *            howManyBits(-5) = 4    >
+ *            howManyBits(0)  = 1    >0000
+ *            howManyBits(-1) = 1    >
+ *            howManyBits(0x80000000) = 32 >1000 0000 0000 0000 0000 0000 0000 0000
  *  Legal ops: ! ~ & ^ | + << >>
  *  Max ops: 90
  *  Rating: 4
  */
+ //q: how to solve the above problem?
+ //a: we can use the binary search to solve this problem.
+  //   we can divide the number into two parts, the left part and the right part.
+  //   the left part is the MSB, the right part is the rest bits.
+  //   we can use the left part to control the right part.
+  //   if the left part is zero, we can ignore the left part and only focus on the right part.
+  //   if the left part is not zero, we can ignore the right part and only focus on the left part.
 int howManyBits(int x) {
-  return 0;
+  int temp = x>>16;
+  int temp1 = 0;
+  int bitCount = 0;
+  int bitCountTmp = 0;
+  //calculate the MSB 16 bits.
+  temp = ((temp >> 31) & 1) | ((~temp + 1) >> 31 & 1);
+  bitCountTmp = (~temp + 1) & 16;
+  bitCount = bitCount + bitCountTmp;
+
+  temp = x >> bitCountTmp;//Process 16 bits
+  temp1 = (temp >> 8) & 0xFF;
+  temp1 = ((temp1>>31)&1) | ((~temp1 + 1)>>31&1);
+  bitCountTmp = ((~temp1 + 1) & 8);
+  bitCount = bitCount + bitCountTmp;
+
+  temp = temp >> bitCountTmp;//Process 8 bits
+  temp1 = (temp >> 4) & 0xF;
+  temp1 = ((temp1>>31)&1) | ((~temp1 + 1)>>31&1);
+  bitCountTmp = ((~temp1 + 1) & 4);
+  bitCount = bitCount + bitCountTmp;
+
+  temp = temp >> bitCountTmp;//Process 4 bits
+  temp1 = (temp >> 2) & 0x3;
+  temp1 = ((temp1>>31)&1) | ((~temp1 + 1)>>31&1);
+  bitCountTmp = ((~temp1 + 1) & 2);
+  bitCount = bitCount + bitCountTmp;
+
+  temp = temp >> bitCountTmp;//Process 2 bits
+  temp1 = (temp >> 1) & 0x1;
+  temp1 = ((temp1>>31)&1) | ((~temp1 + 1)>>31&1);
+  bitCountTmp = ((~temp1 + 1) & 1);
+  bitCount = bitCount + bitCountTmp;
+
+  return bitCount;
 }
 //float
 /* 
