@@ -298,7 +298,29 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {
-  return 2;
+  /*Regarding the floating representation for single-precision, the basic formulation:
+  (-1)^s * 2^E * M
+  Case1: when E != 0
+  So 2*f, should be
+  (-1)^s * 2^(E+1) * M
+  we know E is the 23-31 bit in a single-precision. So we aim to +1 for this area.
+  Case2: when E==0 M!= 0
+  in such case , we should left shift the M, keep sign symbol and E the original value.
+  Case3:
+  wehn E=0x7F8(all 8 bits is 1), in such case, returning uf itself.
+  */
+  
+  // int emask = ((1<<23) - 1)^((1<<31) - 1);
+  int suffix = uf & ((1<<23) - 1);
+  int E = ((uf>>23))&0xFF;//the original E
+  int isUnInffinit = !(E^0xFF);//check if we are a uninffinit number
+  int finalR = 0;
+  suffix = suffix << ((!E));
+  E = E + (!!E); //the final E
+  // printf("floatScale2 suffix %x , emask %x, E %x, sign bit %x\n",suffix, emask, E, uf &(1<<31));
+  finalR = ((uf &(1<<31)) | (E<<23) | suffix);
+  return (uf & (~isUnInffinit + 1)) | (finalR & (~(!isUnInffinit) + 1));
+  
 }
 /* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
