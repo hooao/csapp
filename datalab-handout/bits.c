@@ -335,8 +335,14 @@ unsigned floatScale2(unsigned uf) {
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {
-  return 2;
+  int E = ((uf>>23))&0xFF;//the original E
+  int Expr = 1<<(E-127);
+  int M = (uf & (1<<23 - 1))/((1<<23)-1);
+  int S = (uf & (1 << 31));
+  S = S & !!M;
+  return (Expr*M) | S;
 }
+
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
  *   (2.0 raised to the power x) for any 32-bit integer x.
